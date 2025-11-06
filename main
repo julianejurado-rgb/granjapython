@@ -1,6 +1,6 @@
 from modelo.Animal import Animal
 from modelo.BaseDatos import BaseDatos
-from Interfaz.Interfaz import Interfaz
+from Interfaz.Interface import Interfaz
 
 def main():
     base = BaseDatos()
