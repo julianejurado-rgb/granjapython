@@ -1,0 +1,87 @@
+def listarAnimales(db):
+    lista = [{"codigo": a.id_animal, "raza": a.raza, "edad": a.edad} for a in db.lista_animales]
+    return {"estado": "ok", "mensaje": "Animales registrados", "datos": lista}
+
+
+def crearAnimal(db, ClaseAnimal, codigo, raza, edad):
+    codigo = codigo.strip()
+    if db.indiceAnimal(codigo) != -1:
+        return {"estado": "error", "mensaje": "El código ya existe", "datos": []}
+
+    nuevo = ClaseAnimal(codigo, raza.strip(), edad)
+    db.lista_animales.append(nuevo)
+    db.produccion_animales[codigo] = []
+    return {"estado": "ok", "mensaje": f"Animal {codigo} registrado correctamente", "datos": []}
+
+
+def consultarAnimal(db, codigo):
+    codigo = codigo.strip()
+    animal = db.obtenerAnimal(codigo)
+    if not animal:
+        return {"estado": "error", "mensaje": "Animal no encontrado", "datos": []}
+    datos = [{"codigo": animal.id_animal, "raza": animal.raza, "edad": animal.edad}]
+    return {"estado": "ok", "mensaje": "Consulta exitosa", "datos": datos}
+
+
+def actualizarAnimal(db, codigo, raza, edad):
+    idx = db.indiceAnimal(codigo)
+    if idx == -1:
+        return {"estado": "error", "mensaje": "No existe ese animal", "datos": []}
+    db.lista_animales[idx].raza = raza.strip()
+    db.lista_animales[idx].edad = edad
+    return {"estado": "ok", "mensaje": f"Datos de {codigo} actualizados", "datos": []}
+
+
+def eliminarAnimal(db, codigo):
+    idx = db.indiceAnimal(codigo)
+    if idx == -1:
+        return {"estado": "error", "mensaje": "Animal no encontrado", "datos": []}
+    eliminado = db.lista_animales.pop(idx)
+    db.produccion_animales.pop(codigo, None)
+    return {"estado": "ok", "mensaje": f"Animal {eliminado.id_animal} eliminado", "datos": []}
+
+
+# --- PRODUCCIÓN ---
+def registrarProduccion(db, codigo, periodo, cantidad):
+    animal = db.obtenerAnimal(codigo)
+    if not animal:
+        return {"estado": "error", "mensaje": "No existe el animal", "datos": []}
+    if db.buscarProduccion(codigo, periodo):
+        return {"estado": "error", "mensaje": f"Ya hay registro en {periodo}", "datos": []}
+    db.agregarProduccion(codigo, periodo, cantidad)
+    return {"estado": "ok", "mensaje": f"Producción de {periodo} registrada", "datos": []}
+
+
+def actualizarProduccion(db, codigo, periodo, cantidad):
+    if db.actualizarProduccion(codigo, periodo, cantidad):
+        return {"estado": "ok", "mensaje": f"Producción de {periodo} actualizada", "datos": []}
+    return {"estado": "error", "mensaje": "No se encontró el registro", "datos": []}
+
+
+def eliminarProduccion(db, codigo, periodo):
+    if db.eliminarProduccion(codigo, periodo):
+        return {"estado": "ok", "mensaje": f"Producción del periodo {periodo} eliminada", "datos": []}
+    return {"estado": "error", "mensaje": "No existe ese registro", "datos": []}
+
+
+def produccionSemanal(db, codigo, periodo):
+    registro = db.buscarProduccion(codigo, periodo)
+    if registro:
+        return {"estado": "ok", "mensaje": f"Producción del periodo {periodo}", "datos": [registro]}
+    return {"estado": "error", "mensaje": "Sin datos para ese periodo", "datos": []}
+
+
+def produccionAcumulada(db, codigo):
+    if codigo not in db.produccion_animales:
+        return {"estado": "error", "mensaje": "No hay registros de ese animal", "datos": []}
+    total = sum(r[1] for r in db.produccion_animales[codigo])
+    return {"estado": "ok", "mensaje": f"Producción total de {codigo}", "datos": [{"codigo": codigo, "total": total}]}
+
+
+def listarProduccionAnimal(db, codigo):
+    if codigo not in db.produccion_animales:
+        return {"estado": "error", "mensaje": "No se encontró producción", "datos": []}
+    lista = [{"semana": sem, "cantidad": cant} for sem, cant in db.produccion_animales[codigo]]
+    if not lista:
+        return {"estado": "ok", "mensaje": f"El animal {codigo} no tiene registros", "datos": []}
+    return {"estado": "ok", "mensaje": f"Producción de {codigo}", "datos": lista}
