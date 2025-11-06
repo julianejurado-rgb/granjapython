@@ -1,4 +1,4 @@
-class Interfaz:
+class Interface:
     def __init__(self, db, ClaseAnimal):
         self.db = db
         self.Animal = ClaseAnimal
