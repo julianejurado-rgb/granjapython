@@ -1,0 +1,41 @@
+class interfaz:
+    def __init__(self, db, ClaseAnimal):
+        self.db = db
+        self.Animal = ClaseAnimal
+
+    def iniciar(self):
+        print("=== Sistema de Control Avícola ===")
+        while True:
+            print("\n1. Listar animales")
+            print("2. Crear animal")
+            print("3. Consultar animal")
+            print("4. Actualizar animal")
+            print("5. Eliminar animal")
+            print("6. Salir")
+
+            opcion = input("Seleccione una opción: ")
+
+            if opcion == "1":
+                print(listarAnimales(self.db))
+            elif opcion == "2":
+                codigo = input("Código: ")
+                raza = input("Raza: ")
+                edad = int(input("Edad: "))
+                print(crearAnimal(self.db, self.Animal, codigo, raza, edad))
+            elif opcion == "3":
+                codigo = input("Código: ")
+                print(consultarAnimal(self.db, codigo))
+            elif opcion == "4":
+                codigo = input("Código: ")
+                raza = input("Nueva raza: ")
+                edad = int(input("Nueva edad: "))
+                print(actualizarAnimal(self.db, codigo, raza, edad))
+            elif opcion == "5":
+                codigo = input("Código: ")
+                print(eliminarAnimal(self.db, codigo))
+            elif opcion == "6":
+                print("Saliendo del sistema...")
+                break
+            else:
+                print("Opción inválida")
+
