@@ -1,1 +1,62 @@
+class BaseDatos:
+    def __init__(self):
+        # Lista de animales registrados
+        self.lista_animales = []
+        # Diccionario: código -> lista de tuplas (semana, huevos)
+        self.produccion_animales = {}
+
+    def indiceAnimal(self, codigo):
+        for idx, animal in enumerate(self.lista_animales):
+            if animal.id_animal == codigo:
+                return idx
+        return -1
+
+    def cargarDatosIniciales(self, ClaseAnimal):
+        a1 = ClaseAnimal("P001", "Leghorn", 30)
+        a2 = ClaseAnimal("P002", "Rhode Island", 28)
+        a3 = ClaseAnimal("P003", "Plymouth", 32)
+
+        self.lista_animales.extend([a1, a2, a3])
+
+        self.produccion_animales = {
+            "P001": [("AGOS1", 34), ("AGOS2", 36)],
+            "P002": [("AGOS2", 30)],
+            "P003": []
+        }
+
+    # Funciones auxiliares para producción
+    def obtenerAnimal(self, codigo):
+        idx = self.indiceAnimal(codigo)
+        return self.lista_animales[idx] if idx != -1 else None
+
+    def buscarProduccion(self, codigo, periodo):
+        if codigo not in self.produccion_animales:
+            return None
+        for registro in self.produccion_animales[codigo]:
+            if registro[0] == periodo:
+                return registro
+        return None
+
+    def agregarProduccion(self, codigo, periodo, cantidad):
+        if codigo in self.produccion_animales:
+            self.produccion_animales[codigo].append((periodo, cantidad))
+
+    def actualizarProduccion(self, codigo, periodo, cantidad):
+        if codigo not in self.produccion_animales:
+            return False
+        for i, (sem, _) in enumerate(self.produccion_animales[codigo]):
+            if sem == periodo:
+                self.produccion_animales[codigo][i] = (periodo, cantidad)
+                return True
+        return False
+
+    def eliminarProduccion(self, codigo, periodo):
+        if codigo not in self.produccion_animales:
+            return False
+        lista = self.produccion_animales[codigo]
+        for i, (sem, _) in enumerate(lista):
+            if sem == periodo:
+                lista.pop(i)
+                return True
+        return False
 
