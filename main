@@ -1,11 +1,11 @@
 from modelo.Animal import Animal
 from modelo.BaseDatos import BaseDatos
-from Interfaz.Interface import Interfaz
+from Interfaz.Interface import Interface
 
 def main():
     base = BaseDatos()
     base.cargarDatosIniciales(Animal)
-    ui = Interfaz(base, Animal)
+    ui = Interface(base, Animal)
     ui.iniciar()
 
 if __name__ == "__main__":
